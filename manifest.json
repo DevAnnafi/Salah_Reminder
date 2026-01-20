@@ -1,6 +1,51 @@
 {
-	"manifest_version": 1,
+	"manifest_version": 3,
 	"name": "Salah_Reminder",
 	"description": "A Google Chrome extension that reminds the Muslim to pray on time and locks the screen until they finished praying",
-	"version": "1.0"
+	"version": "1.0.0",
+	"author": "Annafi Islam",
+
+	"permissions": [
+		"alarms",
+		"notifications",
+		"storage",
+		"activeTab",
+		"scripting"
+	],
+
+	"background": {
+		"service_worker": "background.js"
+	},
+
+	"host_permissions": [
+    "https://api.aladhan.com/*"
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["lock-screen.html", "styles.css"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "commands": {
+    "confirm-prayer": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+P",
+        "mac": "Command+Shift+P"
+      },
+      "description": "Confirm prayer completion"
+    },
+    "open-popup": {
+      "suggested_key": {
+        "default": "Alt+P",
+        "mac": "Alt+P"
+      },
+      "description": "Open prayer times popup"
+    }
+  },
+
+  "offline_enabled": true
+
+
 }
