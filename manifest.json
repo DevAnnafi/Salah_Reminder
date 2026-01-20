@@ -1,0 +1,6 @@
+{
+	"manifest_version": 1,
+	"name": "Salah_Reminder",
+	"description": "A Google Chrome extension that reminds the Muslim to pray on time and locks the screen until they finished praying",
+	"version": "1.0"
+}
