@@ -1,31 +1,113 @@
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-       <meta charset="UTF-8">
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <title>As-Salah</title>
-   </head>
-   <body>
-       <!-- Your content goes here -->
-      <div class="header">
-	      <h1>🕌 Muslim Prayer Reminder </h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muslim Prayer Reminder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <h1>🕌 Muslim Prayer Reminder</h1>
+        <button class="settings-btn" id="open-settings" aria-label="Open settings">⚙️</button>
+    </div>
 
-      	      <div class="header-info">
-		      <span class="location" id="user-location">
-			      📍 Loading location...
-		      </span>
+    <!-- Location and Date Info -->
+    <div class="info-section">
+        <div class="location" id="user-location">
+            <span class="icon">📍</span>
+            <span class="text">Set your location</span>
+        </div>
+        <div class="dates">
+            <span class="gregorian-date" id="gregorian-date">Loading...</span>
+            <span class="islamic-date" id="islamic-date">Loading...</span>
+        </div>
+    </div>
 
-		      <span class="date" id="current-date">
-			      Loading date...
-		      </span>
-	      </div>
+    <!-- Next Prayer Countdown (Optional for now) -->
+    <div class="next-prayer" id="next-prayer">
+        <p class="label">Next Prayer</p>
+        <p class="prayer-name" id="next-prayer-name">--</p>
+        <p class="countdown" id="countdown-timer">--</p>
+    </div>
 
-	      <button class="settings-btn" id="open-settings" aria-label="Open settings">
-		      ⚙️
-	      </button>
+    <!-- Prayer Times List -->
+    <div class="prayer-times">
+        <div class="prayer-item" data-prayer="fajr">
+            <span class="prayer-name">Fajr</span>
+            <span class="prayer-time" id="fajr-time">--:--</span>
+            <span class="status-icon" id="fajr-status">⏰</span>
+        </div>
 
-       </div>
+        <div class="prayer-item" data-prayer="dhuhr">
+            <span class="prayer-name">Dhuhr</span>
+            <span class="prayer-time" id="dhuhr-time">--:--</span>
+            <span class="status-icon" id="dhuhr-status">⏰</span>
+        </div>
 
+        <div class="prayer-item" data-prayer="asr">
+            <span class="prayer-name">Asr</span>
+            <span class="prayer-time" id="asr-time">--:--</span>
+            <span class="status-icon" id="asr-status">⏰</span>
+        </div>
 
-  </body>
-  </html>
+        <div class="prayer-item" data-prayer="maghrib">
+            <span class="prayer-name">Maghrib</span>
+            <span class="prayer-time" id="maghrib-time">--:--</span>
+            <span class="status-icon" id="maghrib-status">⏰</span>
+        </div>
+
+        <div class="prayer-item" data-prayer="isha">
+            <span class="prayer-name">Isha</span>
+            <span class="prayer-time" id="isha-time">--:--</span>
+            <span class="status-icon" id="isha-status">⏰</span>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions">
+        <button class="primary-btn" id="confirm-prayer-btn">I Have Prayed</button>
+    </div>
+
+    <!-- Settings Panel (Initially Hidden) -->
+    <div class="settings-panel" id="settings-panel" style="display: none;">
+        <h2>Settings</h2>
+        
+        <div class="setting-group">
+            <label for="city-input">City/Location:</label>
+            <input type="text" id="city-input" placeholder="e.g., New York, NY">
+        </div>
+
+        <div class="setting-group">
+            <label for="calculation-method">Calculation Method:</label>
+            <select id="calculation-method">
+                <option value="2">ISNA (North America)</option>
+                <option value="3">MWL (Europe)</option>
+                <option value="4">Umm Al-Qura (Makkah)</option>
+                <option value="1">Karachi</option>
+                <option value="5">Egyptian</option>
+            </select>
+        </div>
+
+        <div class="setting-group">
+            <label for="grace-period">Grace Period (minutes):</label>
+            <input type="number" id="grace-period" value="15" min="5" max="60">
+        </div>
+
+        <div class="setting-group">
+            <label>
+                <input type="checkbox" id="enable-lock" checked>
+                Enable screen lock for missed prayers
+            </label>
+        </div>
+
+        <div class="settings-actions">
+            <button class="primary-btn" id="save-settings">Save Settings</button>
+            <button class="secondary-btn" id="close-settings">Cancel</button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
