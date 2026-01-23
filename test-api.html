@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+<body>
+    <h1>Testing API Functions</h1>
+    <p>Open the browser console (F12) to see results</p>
+    
+    <script src="api.js"></script>
+    <script>
+        // Test will run automatically when page loads
+        console.log("=== STARTING API TESTS ===");
+        
+        // Test 1: Date Formatting
+        console.log("\n--- Test 1: Date Formatting ---");
+        try {
+            const date = getTodayFormatted();
+            console.log("✅ Date formatted:", date);
+            console.log("Expected format: DD-MM-YYYY (e.g., 22-01-2026)");
+        } catch (error) {
+            console.error("❌ Date formatting failed:", error);
+        }
+        
+        // Test 2: Location Parsing
+        console.log("\n--- Test 2: Location Parsing ---");
+        try {
+            console.log("Test 2a: City and Country");
+            console.log(parseLocation("New York, USA"));
+            
+            console.log("Test 2b: Just City");
+            console.log(parseLocation("London"));
+            
+            console.log("Test 2c: City, State, Country");
+            console.log(parseLocation("Los Angeles, California, USA"));
+            
+            console.log("✅ All location parsing tests passed");
+        } catch (error) {
+            console.error("❌ Location parsing failed:", error);
+        }
+        
+        // Test 3: Extract Functions (with mock data)
+        console.log("\n--- Test 3: Extract Functions ---");
+        const mockData = {
+            timings: {
+                Fajr: "05:42",
+                Dhuhr: "12:15",
+                Asr: "15:30",
+                Maghrib: "18:45",
+                Isha: "20:15"
+            },
+            date: {
+                gregorian: {
+                    date: "22-01-2026",
+                    day: "22",
+                    weekday: { en: "Thursday" },
+                    month: { en: "January" },
+                    year: "2026"
+                },
+                hijri: {
+                    date: "22-07-1447",
+                    day: "22",
+                    weekday: { en: "Al Khamees" },
+                    month: { en: "Rajab", ar: "رَجَب" },
+                    year: "1447"
+                }
+            }
+        };
+        
+        try {
+            console.log("Prayer Times:", extractPrayerTimes(mockData));
+            console.log("Date Info:", extractDateInfo(mockData));
+            console.log("✅ Extract functions passed");
+        } catch (error) {
+            console.error("❌ Extract functions failed:", error);
+        }
+        
+        // Test 4: Real API Call
+        console.log("\n--- Test 4: Real API Call ---");
+        console.log("Fetching real prayer times from API...");
+        
+        getPrayerTimesByCity("New York", "USA", 2)
+            .then(data => {
+                console.log("✅ API call successful!");
+                console.log("Full API response:", data);
+                console.log("\nExtracted Prayer Times:", extractPrayerTimes(data));
+                console.log("\nExtracted Date Info:", extractDateInfo(data));
+            })
+            .catch(error => {
+                console.error("❌ API call failed:", error);
+            });
+        
+        console.log("\n=== TESTS COMPLETE ===");
+        console.log("Check results above. API call results will appear after a moment.");
+    </script>
+</body>
+</html>
+```
+
+### **Step 2: Run the Test**
+
+1. **Open `test-api.html` in your browser** (double-click the file)
+2. **Open Developer Console** (Press F12 or right-click → Inspect → Console tab)
+3. **Look at the console output**
+
+---
+
+## What to Look For:
+
+### **✅ Success Looks Like:**
+```
+=== STARTING API TESTS ===
+
+--- Test 1: Date Formatting ---
+✅ Date formatted: 22-01-2026
+Expected format: DD-MM-YYYY (e.g., 22-01-2026)
+
+--- Test 2: Location Parsing ---
+Test 2a: City and Country
+{city: 'New York', country: 'USA'}
+Test 2b: Just City
+{city: 'London', country: 'US'}
+Test 2c: City, State, Country
+{city: 'Los Angeles', country: 'USA'}
+✅ All location parsing tests passed
+
+--- Test 3: Extract Functions ---
+Prayer Times: {Fajr: '05:42', Dhuhr: '12:15', Asr: '15:30', Maghrib: '18:45', Isha: '20:15'}
+Date Info: {gregorian: {...}, hijri: {...}}
+✅ Extract functions passed
+
+--- Test 4: Real API Call ---
+Fetching real prayer times from API...
+
+=== TESTS COMPLETE ===
+
+✅ API call successful!
+Full API response: {timings: {...}, date: {...}, meta: {...}}
+Extracted Prayer Times: {Fajr: '05:42', Dhuhr: '12:15', ...}
+Extracted Date Info: {gregorian: {...}, hijri: {...}}
+```
+
+### **❌ Failure Looks Like:**
+```
+❌ Date formatting failed: ReferenceError: getTodayFormatted is not defined
+❌ Location parsing failed: TypeError: Cannot read property 'trim' of undefined
+❌ API call failed: Error: HTTP error! status: 404
