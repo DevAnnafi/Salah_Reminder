@@ -15,7 +15,7 @@ async function getPrayerTimesByCity(city, country, method) {
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error("HTTP error! status: ${response.status}");
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -39,13 +39,13 @@ async function getPrayerTimesByCity(city, country, method) {
 
 async function getPrayerTimesByCoordinates(latitude, longitude, method) {
     const date = getTodayFormatted();
-    const url = `${API_BASE_URL}/timings/${date}?latitude=${lat}&longitude=${lon}&method=${method}`
+    const url = `${API_BASE_URL}/timings/${date}?latitude=${latitude}&longitude=${longitude}&method=${method}`
 
     try {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error("HTTP error! status: ${response.status}");
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -54,7 +54,7 @@ async function getPrayerTimesByCoordinates(latitude, longitude, method) {
             return data.data;
         }
         else {
-            throw new Error(`API error: $(data.status || 'Unknown error'});`)
+            throw new Error(`API error: ${data.status || 'Unknown error'}`);
         }
 
     } catch(error) {
@@ -124,12 +124,10 @@ function parseLocation(locationInput) {
 
     if (trimmed_input.includes(",")) {
        const parts = trimmed_input.split(",");
-       const trimmedParts = trimmed_input.trim();
+       const trimmedParts = parts.map(part => part.trim());
        const city = trimmedParts[0];
        const country = trimmedParts[trimmedParts.length - 1];
        return { city: city, country: country};
-        
-
     }
 
     else {

@@ -80,6 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (locationText) {
                 locationText.textContent = data.userLocation;
             }
+        } else {
+            // Show helpful message when no location is set
+            const locationText = elements.userLocation.querySelector('.text');
+            if (locationText) {
+                locationText.textContent = 'Click ⚙️ to set your location';
+            }
         }
         
         // Update dates
@@ -164,7 +170,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const hijri = dateInfo.hijri;
             elements.islamicDate.textContent = `${hijri.day} ${hijri.month.en} ${hijri.year} AH`;
         } else {
-            elements.islamicDate.textContent = 'Loading Islamic date...';
+            // Check if location is set
+            chrome.storage.local.get(['userLocation'], (data) => {
+                if (!data.userLocation) {
+                    elements.islamicDate.textContent = 'Set location to view Islamic date';
+                } else {
+                    elements.islamicDate.textContent = 'Loading Islamic date...';
+                }
+            });
         }
     }
 
@@ -283,10 +296,14 @@ document.addEventListener('DOMContentLoaded', () => {
      * Save settings
      */
     elements.saveSettingsBtn.addEventListener('click', () => {
+        console.log('Save Settings button clicked');
+        
         const city = elements.cityInput.value.trim();
         const method = elements.calculationMethod.value;
         const grace = elements.gracePeriod.value;
         const lock = elements.enableLock.checked;
+        
+        console.log('Settings to save:', { city, method, grace, lock });
         
         // Validation
         if (!city) {
@@ -309,24 +326,38 @@ document.addEventListener('DOMContentLoaded', () => {
             
             console.log('Settings saved successfully');
             
+            // Show saving indicator
+            elements.saveSettingsBtn.textContent = 'Saving...';
+            elements.saveSettingsBtn.disabled = true;
+            
             // Notify background script to fetch new prayer times
             chrome.runtime.sendMessage({
                 action: 'updatePrayerTimes',
                 location: city,
                 method: method
             }, (response) => {
+                console.log('Background script response:', response);
+                
                 if (chrome.runtime.lastError) {
                     console.error('Error sending message:', chrome.runtime.lastError);
+                    alert('Error updating prayer times: ' + chrome.runtime.lastError.message);
+                    elements.saveSettingsBtn.textContent = 'Save Settings';
+                    elements.saveSettingsBtn.disabled = false;
+                    return;
                 }
+                
+                // Close settings panel
+                elements.settingsPanel.style.display = 'none';
+                
+                // Reset button
+                elements.saveSettingsBtn.textContent = 'Save Settings';
+                elements.saveSettingsBtn.disabled = false;
+                
+                // Reload data
+                setTimeout(() => {
+                    loadDataFromStorage();
+                }, 2000); // Give background script time to fetch new data
             });
-            
-            // Close settings panel
-            elements.settingsPanel.style.display = 'none';
-            
-            // Reload data
-            setTimeout(() => {
-                loadDataFromStorage();
-            }, 1000); // Give background script time to fetch new data
         });
     });
 
@@ -353,6 +384,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // === INITIALIZATION ===
 
     console.log('Popup script loaded');
+    console.log('Settings button found:', !!elements.saveSettingsBtn);
+    console.log('All required elements found:', {
+        cityInput: !!elements.cityInput,
+        saveBtn: !!elements.saveSettingsBtn,
+        closeBtn: !!elements.closeSettingsBtn,
+        settingsPanel: !!elements.settingsPanel
+    });
     
     // Load data on popup open
     loadDataFromStorage();

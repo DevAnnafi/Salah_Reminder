@@ -4,11 +4,6 @@
 importScripts('api.js');
 
 // === STATE VARIABLES ===
-// Track current state
-
-// background.js - Service worker for Muslim Prayer Reminder extension
-
-// === STATE VARIABLES ===
 let currentPrayer = null;      // Currently active/missed prayer
 let lockActive = false;        // Is lock screen currently showing
 let gracePeriodTimer = null;   // Timer for grace period before locking
