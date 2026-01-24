@@ -359,6 +359,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
     
+    else if (message.action === 'confirmSpecificPrayer') {
+        // User clicked "I Have Prayed" for a specific prayer
+        const prayerName = message.prayerName;
+        if (prayerName) {
+            confirmPrayer(prayerName).then(() => {
+                sendResponse({ success: true, prayerName: prayerName });
+            });
+        } else {
+            sendResponse({ success: false, error: 'No prayer name provided' });
+        }
+        return true;
+    }
+    
     else if (message.action === 'checkLockStatus') {
         // Content script checking if lock should be active
         sendResponse({

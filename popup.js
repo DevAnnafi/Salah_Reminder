@@ -365,19 +365,69 @@ document.addEventListener('DOMContentLoaded', () => {
      * Confirm current prayer button
      */
     elements.confirmPrayerBtn.addEventListener('click', () => {
-        chrome.runtime.sendMessage({
-            action: 'confirmCurrentPrayer'
-        }, (response) => {
-            if (chrome.runtime.lastError) {
-                console.error('Error confirming prayer:', chrome.runtime.lastError);
+        console.log('I Have Prayed button clicked');
+        
+        // Get current prayer times and status to find which prayer to confirm
+        chrome.storage.local.get(['prayerTimes', 'prayerStatus'], (data) => {
+            const prayerTimes = data.prayerTimes;
+            const prayerStatus = data.prayerStatus || {};
+            
+            if (!prayerTimes) {
+                alert('No prayer times available. Please set your location.');
                 return;
             }
             
-            if (response && response.success) {
-                console.log('Prayer confirmed successfully');
-                // Reload UI to show updated status
-                loadDataFromStorage();
+            // Find the most recent prayer that hasn't been confirmed
+            const now = new Date();
+            const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+            let prayerToConfirm = null;
+            
+            // Check prayers in reverse order to find the most recent one
+            for (let i = prayers.length - 1; i >= 0; i--) {
+                const prayer = prayers[i];
+                const prayerTime = prayerTimes[prayer];
+                
+                if (!prayerTime) continue;
+                
+                // Parse prayer time
+                const timeStr = prayerTime.split(' ')[0];
+                const [hours, minutes] = timeStr.split(':').map(Number);
+                const prayerDate = new Date();
+                prayerDate.setHours(hours, minutes, 0, 0);
+                
+                // If this prayer has passed and not confirmed, mark it
+                if (prayerDate <= now && !prayerStatus[prayer]) {
+                    prayerToConfirm = prayer;
+                    break;
+                }
             }
+            
+            if (!prayerToConfirm) {
+                alert('No unconfirmed prayers found. All prayers have been confirmed or not yet due.');
+                return;
+            }
+            
+            console.log(`Confirming prayer: ${prayerToConfirm}`);
+            
+            // Send message to background to confirm this prayer
+            chrome.runtime.sendMessage({
+                action: 'confirmSpecificPrayer',
+                prayerName: prayerToConfirm
+            }, (response) => {
+                if (chrome.runtime.lastError) {
+                    console.error('Error confirming prayer:', chrome.runtime.lastError);
+                    alert('Error confirming prayer: ' + chrome.runtime.lastError.message);
+                    return;
+                }
+                
+                if (response && response.success) {
+                    console.log(`${prayerToConfirm} prayer confirmed successfully`);
+                    // Reload UI to show updated status
+                    loadDataFromStorage();
+                } else {
+                    alert(response.error || 'Failed to confirm prayer');
+                }
+            });
         });
     });
 
